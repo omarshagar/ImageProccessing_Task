@@ -1,0 +1,23 @@
+function [cuttedImages] =cutImage (img)
+H=360;
+W=700;
+cuttedImages=[[[[]]]];
+filt = fspecial('average');
+fimg = imfilter(img, filt);
+black_bg_img = fimg;
+black_bg_img(fimg == 255) = 0;
+black_bg_img((fimg > 0) & (fimg < 255)) = 255;
+gs = rgb2gray(black_bg_img);
+bw = gs>0;
+stat = regionprops(bw, "BoundingBox");
+if ~isempty(stat)
+    for i=2:size(stat, 1)
+        bb = stat(i).BoundingBox;
+        obj = imcrop(img, bb);
+        obj=imresize(obj,[H W]);
+        cuttedImages = [[[[cuttedImages]]]  obj];
+       % figure, imshow(obj);
+    end
+end
+
+end 
